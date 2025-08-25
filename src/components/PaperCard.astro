@@ -1,6 +1,6 @@
 ---
+
 import { type CollectionEntry } from 'astro:content';
-import Button from './Button.astro';
 
 export interface Props {
   paper: CollectionEntry<'papers'>;
@@ -8,29 +8,13 @@ export interface Props {
 }
 
 const { paper, class: className } = Astro.props;
-// support both `cover` and `image` frontmatter fields; normalize path to start with '/'
-const { title, affiliations, venueType, venue, year, venueLabel, links } = paper.data;
-const rawImage = paper.data.cover ?? paper.data.image ?? null;
-const imageSrc = rawImage
-  ? rawImage.startsWith('/')
-    ? rawImage
-    : `/${rawImage}`
-  : null;
-
-// imageFit: 'cover' (fill and possibly crop), 'contain' (fit inside, no crop), or 'stretch' (fill and ignore aspect ratio)
-// default to 'contain' so images are fully visible (no cropping)
-const imageFit = (paper.data.imageFit || 'contain');
-
-// computed display label for the paper link (supports custom `venueLabel`)
-const displayLabel = venueLabel || (venue ? `${venue} ${year ?? ''} ${venueType ?? ''}`.trim() : (venueType || 'Paper'));
-const displayIsOral = (venueLabel && /oral/i.test(venueLabel)) || venueType === 'Oral';
+const { title, affiliations = [], links, image } = paper.data;
+const imageSrc = image ? (image.startsWith('/') ? image : `/${image}`) : null;
 const linkEntries = links ? Object.entries(links) : [];
-// find arxiv key case-insensitively (supports 'arxiv', 'Arxiv', 'arXiv', etc.)
+// find arxiv key case-insensitively
 const arxivEntry = linkEntries.find(([k]) => k && k.toLowerCase() === 'arxiv');
 const arxivVal = arxivEntry ? arxivEntry[1] : null;
 const arxivUrl = arxivVal ? (typeof arxivVal === 'string' ? arxivVal : arxivVal.url) : null;
-
-// title can be a string or an object { text, url }
 const titleText = typeof title === 'string' ? title : (title && title.text) ? title.text : '';
 const titleUrlFromTitle = (title && typeof title === 'object' && title.url) ? title.url : null;
 const titleHref = titleUrlFromTitle || arxivUrl;
@@ -38,109 +22,70 @@ const titleHref = titleUrlFromTitle || arxivUrl;
 ---
 
 <article class:list={["pb-8", className]}>
-  <div class="flex flex-row items-start gap-8">
-    {/* 左侧图片 */}
-  <div
-    class:list={[
-      'flex-shrink-0 flex items-center justify-center rounded-none',
-      imageFit === 'contain' ? 'p-2' : ''
-    ]}
-    style={`max-width:298px; max-height:298px; overflow:visible; border-radius:0;`}
-  >
-      {imageSrc ? (
-        <img
-          src={imageSrc}
-          alt={title}
-          class:list={[
-            'object-contain',
-            'max-w-85',
-            'max-h-80',
-            'w-auto',
-            'h-auto',
-            'rounded-none'
-          ]}
-          style="border-radius:0;"
-        />
-      ) : (
-        <div class="text-gray-400 text-xs">No Image</div>
-      )}
-    </div>
+  <article class:list={["pb-8", className]}>
+    <div class="flex flex-row items-start gap-8">
+      {/* 左侧图片 */}
+      <div
+        class="flex-shrink-0 flex items-center justify-center rounded-none p-2"
+        style="max-width:298px; max-height:298px; overflow:visible; border-radius:0;"
+      >
+        {imageSrc ? (
+          <img
+            src={imageSrc}
+            alt={titleText}
+            class="object-contain max-w-85 max-h-80 w-auto h-auto rounded-none"
+            style="border-radius:0;"
+          />
+        ) : (
+          <div class="text-gray-400 text-xs">No Image</div>
+        )}
+      </div>
 
-    {/* 右侧文字内容 */}
-    <div class="flex-1 min-w-0">
-      {/* 论文题目 */}
-      <div class="mb-1">
-        {titleHref ? (
+      {/* 右侧文字内容 */}
+      <div class="flex-1 min-w-0">
+        {/* 论文题目 */}
+        <div class="mb-1">
+          {titleHref ? (
             <h2 class="text-lg font-bold leading-snug line-clamp-2">
-              <a href={titleHref} target="_blank" rel="noopener" class="hover:underline">{titleText || title}</a>
+              <a href={titleHref} target="_blank" rel="noopener" class="hover:underline">{titleText}</a>
             </h2>
           ) : (
-            <h2 class="text-lg font-bold leading-snug line-clamp-2">{titleText || title}</h2>
+            <h2 class="text-lg font-bold leading-snug line-clamp-2">{titleText}</h2>
           )}
-      </div>
-      {/* 论文组织 */}
-      <div class="mb-1">
-        <span class="text-sm text-gray-600 dark:text-gray-400">{affiliations.join(' • ')}</span>
-      </div>
-  {/* 按钮区 */}
-      <div class="flex flex-wrap gap-2 items-center mt-2">
-        {linkEntries.map(([key, val]) => {
-          // support either a string URL or { url, color, label }
-          const rawUrl = typeof val === 'string' ? val : (val && val.url) ? val.url : null;
-          const url = rawUrl && String(rawUrl).trim() !== '' ? rawUrl : null;
-          const color = typeof val === 'string' ? null : (val && val.color) ? val.color : null;
-          const isPaperKey = key === 'paper';
-          const label = (typeof val === 'object' && val && val.label) ? val.label : (isPaperKey ? displayLabel : key);
-
-          // If URL exists, render clickable anchor
-          if (url) {
-            if (isPaperKey) {
+        </div>
+        {/* 论文组织 */}
+        <div class="mb-1">
+          <span class="text-sm text-gray-600 dark:text-gray-400">{affiliations.join(' • ')}</span>
+        </div>
+        {/* 按钮区 */}
+        <div class="flex flex-wrap gap-2 items-center mt-2">
+          {linkEntries.map(([key, val]) => {
+            const rawUrl = typeof val === 'string' ? val : (val && val.url) ? val.url : null;
+            const url = rawUrl && String(rawUrl).trim() !== '' ? rawUrl : null;
+            const color = typeof val === 'string' ? null : (val && val.color) ? val.color : null;
+            const label = (typeof val === 'object' && val && val.label) ? val.label : key;
+            if (url) {
               return (
                 <a
                   href={url}
                   target="_blank"
-                  class={`text-xs font-medium px-2 py-0.5 rounded ${displayIsOral ? 'text-red-600 border border-red-500 hover:underline' : (color ? 'border hover:underline' : 'text-blue-600 hover:underline')}`}
-                  style={color && !displayIsOral ? `color: ${color}; border-color: ${color}` : undefined}
+                  class={`text-xs font-medium px-2 py-0.5 rounded ${color ? 'border hover:underline' : 'text-blue-600 hover:underline'}`}
+                  style={color ? `color: ${color}; border-color: ${color}` : undefined}
                 >
-                  {displayLabel}
+                  {label}
                 </a>
               );
             }
-
             return (
-              <a
-                href={url}
-                target="_blank"
-                class={`text-xs font-medium px-2 py-0.5 rounded ${color ? 'border hover:underline' : 'text-blue-600 hover:underline'}`}
+              <span
+                class={`text-xs font-medium px-2 py-0.5 rounded ${color ? 'border' : 'text-gray-500'}`}
                 style={color ? `color: ${color}; border-color: ${color}` : undefined}
               >
                 {label}
-              </a>
-            );
-          }
-
-          // No URL: render non-clickable text (no hover/underline)
-          if (isPaperKey) {
-            return (
-              <span
-                class={`text-xs font-medium px-2 py-0.5 rounded ${displayIsOral ? 'text-red-600 border border-red-500' : (color ? 'border' : 'text-gray-500')}`}
-                style={color && !displayIsOral ? `color: ${color}; border-color: ${color}` : undefined}
-              >
-                {displayLabel}
               </span>
             );
-          }
-
-          return (
-            <span
-              class={`text-xs font-medium px-2 py-0.5 rounded ${color ? 'border' : 'text-gray-500'}`}
-              style={color ? `color: ${color}; border-color: ${color}` : undefined}
-            >
-              {label}
-            </span>
-          );
-        })}
+          })}
+        </div>
       </div>
     </div>
-  </div>
-</article>
+  </article>
