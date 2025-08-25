@@ -11,13 +11,8 @@ const { paper, class: className } = Astro.props;
 const { title, affiliations = [], links, image } = paper.data;
 const imageSrc = image ? (image.startsWith('/') ? image : `/${image}`) : null;
 const linkEntries = links ? Object.entries(links) : [];
-// find arxiv key case-insensitively
-const arxivEntry = linkEntries.find(([k]) => k && k.toLowerCase() === 'arxiv');
-const arxivVal = arxivEntry ? arxivEntry[1] : null;
-const arxivUrl = arxivVal ? (typeof arxivVal === 'string' ? arxivVal : arxivVal.url) : null;
 const titleText = typeof title === 'string' ? title : (title && title.text) ? title.text : '';
-const titleUrlFromTitle = (title && typeof title === 'object' && title.url) ? title.url : null;
-const titleHref = titleUrlFromTitle || arxivUrl;
+const titleHref = (title && typeof title === 'object' && title.url) ? title.url : null;
 
 ---
 
