@@ -4,7 +4,7 @@ title:
   url: 'https://openreview.net/forum?id=qTsU1QLOph'
 affiliations:
   - 'UdeM'
-  - 'DeepWisdom'
+  - 'MetaGPT'
   - 'McGill'
   - 'Simpleway.AI'
 links:
