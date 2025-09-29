@@ -10,7 +10,7 @@ affiliations:
 links:
   EMNLP 2025 Oral:
     color: '#f00d0d'
-  ICML 2025 LCFM 2025:
+  ICML 2025 LCFM:
     color: '#a20df0'
     url: 'https://openreview.net/forum?id=qTsU1QLOph'
 image: '/paper/nrar/nrar.png'

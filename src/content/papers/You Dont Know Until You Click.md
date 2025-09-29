@@ -13,6 +13,9 @@ affiliations:
   - 'Yale'
   - 'NUS'
 links:
+  NeurIPS 2025 SEA:
+    color: '#a20df0'
+    url: 'https://openreview.net/forum?id=51sqgK8pOP'
   GitHub:
     color: '#0d7ff0'
     url: 'https://github.com/tanghaom/AppEvalPilot'
