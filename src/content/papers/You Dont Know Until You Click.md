@@ -22,6 +22,9 @@ links:
   arXiv:
     color: '#0d7ff0'
     url: 'https://arxiv.org/abs/2508.14104'
+  Video:
+    color: '#ff00aa'
+    url: 'https://www.bilibili.com/video/BV1RXHCzHEqM/?share_source=copy_web&vd_source=748b66e1dcca667c4f5967569dddfe7a'
 image: '/paper/ydkuyc/ydkuyc.png'
 priority: 250814104
 ---

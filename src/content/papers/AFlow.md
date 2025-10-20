@@ -21,6 +21,9 @@ links:
   arXiv:
     color: '#0d7ff0'
     url: 'https://arxiv.org/abs/2410.10762'
+  Video:
+    color: '#ff00aa'
+    url: 'https://iclr.cc/virtual/2025/oral/31731'
 image: '/paper/aflow/aflow.png'
 priority: 241010762
 ---

@@ -22,6 +22,9 @@ links:
   arXiv:
     color: '#0d7ff0'
     url: 'https://arxiv.org/abs/2308.00352'
+  Video:
+    color: '#ff00aa'
+    url: 'https://www.bilibili.com/video/BV1pqYPzJEmP/?share_source=copy_web&vd_source=748b66e1dcca667c4f5967569dddfe7a'
 image: '/paper/metagpt/metagpt.png'
 priority: 230800352
 ---
